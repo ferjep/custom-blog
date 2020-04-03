@@ -1,0 +1,18 @@
+.Loading {
+  position: absolute;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  animation: LoadingAnimation 1s linear infinite;
+}
+
+@keyframes LoadingAnimation {
+  0% {
+    transform: none;
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

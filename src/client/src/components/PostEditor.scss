@@ -1,0 +1,85 @@
+.btn-wrapper {
+  display: flex;
+  margin-left: auto;
+}
+
+.react-tagsinput {
+  background-color: #fff;
+  overflow: hidden;
+  padding-left: 5px;
+  padding-top: 5px;
+  flex: 1;
+
+  & > span {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+
+.react-tagsinput--focused {
+  border-color: #a5d24a;
+}
+
+.react-tagsinput-tag {
+  background-color: #cde69c;
+  border-radius: 2px;
+  border: 1px solid #a5d24a;
+  color: #638421;
+  display: flex;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  padding: 5px;
+}
+
+.react-tagsinput-remove {
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.react-tagsinput-tag a::before {
+  content: ' ×';
+}
+
+.react-tagsinput-input {
+  background: transparent;
+  border: 0;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 6px;
+  margin-top: 1px;
+  outline: none;
+  padding: 5px;
+  flex: 1;
+}
+
+.ce-block__content,
+.ce-toolbar__content {
+  max-width: none !important;
+}
+
+.ce-block__content {
+  border-bottom: 1px solid rgb(212, 212, 212);
+}
+
+.slug-input-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  width: 30px;
+  outline: none;
+  border: none;
+  font-size: 1rem;
+}
+
+@media all and (max-width: 550px) {
+  .PostEditor-header {
+    flex-direction: column;
+  }
+}

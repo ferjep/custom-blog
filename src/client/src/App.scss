@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;1,100&display=swap');
+:root {
+  --font-primary: #1d1d1d;
+  --navHeight: 55px;
+  font-size: 16px;
+
+  --blue: #126fd3;
+  --indigo: #6610f2;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #dc3545;
+  --orange: #fd7e14;
+  --yellow: #ffc107;
+  --green: #28a745;
+  --teal: #20c997;
+  --cyan: #17a2b8;
+  --white: #fff;
+  --gray: #6c757d;
+  --gray-dark: #343a40;
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --light: #f8f9fa;
+  --dark: #343a40;
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-roboto: 'Roboto', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+li,
+button,
+a,
+svg,
+ul {
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-family-roboto);
+  color: var(--font-primary);
+}
+
+.page-center {
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 1rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid gray;
+}
+
+.border-white {
+  padding: 0.4rem;
+  border: 1px solid white;
+  border-radius: 1px;
+}
+
+.border-gray {
+  padding: 0.4rem;
+  border: 1px solid gray;
+  border-radius: 1px;
+}
+
+.bg-danger {
+  background: var(--danger) !important;
+}
+
+.btn {
+  padding: 10px 13px;
+  background: var(--green);
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: white;
+  letter-spacing: 1.5px;
+  margin-left: 10px;
+  text-decoration: none;
+  &:hover {
+    background: darkgreen;
+    transform: scale();
+  }
+  text-align: center;
+}
+
+.input-wrapper {
+  display: flex;
+  margin-bottom: 1rem;
+  border: 1px solid gray;
+
+  & > input[type='text'] {
+    flex: 1;
+    outline: none;
+    border: none;
+    font-size: 1rem;
+    padding: 0 10px;
+    min-width: 30px;
+    max-width: 100%;
+  }
+}
+
+.input-name {
+  background: black;
+  color: white;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+
+@media all and (max-width: 430px) {
+  :root {
+    font-size: 14px;
+  }
+
+  .page-header {
+  }
+}
+
+@media all and (min-width: 1440px) {
+  :root {
+    font-size: 16px;
+  }
+}

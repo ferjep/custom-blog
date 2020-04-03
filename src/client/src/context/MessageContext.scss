@@ -1,0 +1,32 @@
+.message-alert {
+  position: fixed;
+  z-index: 50;
+  bottom: 2rem;
+  left: 50vw;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+
+  &.error {
+    background: var(--danger);
+  }
+
+  &.success {
+    background: var(--success);
+  }
+
+  &--close {
+    background: none;
+    outline: none;
+    border: none;
+    margin-left: 10px;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+  }
+}
