@@ -1,0 +1,33 @@
+{
+  "name": "custom-blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon src/index.js",
+    "client": "cd src/client && npm start",
+    "build-client": "cd src/client && npm run build",
+    "start": "npm run build-client && node src/index.js"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "*.json",
+      "src/client/*"
+    ]
+  },
+  "keywords": [],
+  "author": "Fernando Esparragoza <fernando.fjep@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "gridfs-stream": "^1.1.1",
+    "mongoose": "^5.9.5",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "multer-gridfs-storage": "^4.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
