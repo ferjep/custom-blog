@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "cd src/client && npm install",
     "server": "nodemon src/index.js",
     "client": "cd src/client && npm start",
     "build-client": "cd src/client && npm run build",
-    "start": "npm run build-client && node src/index.js"
+    "start": "node src/index.js"
   },
   "nodemonConfig": {
     "ignore": [
