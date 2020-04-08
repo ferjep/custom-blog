@@ -8,7 +8,7 @@
     "server": "nodemon src/index.js",
     "client": "cd src/client && npm start",
     "build-client": "cd src/client && npm run build",
-    "start": "node src/index.js"
+    "start": "npm install && node src/index.js"
   },
   "nodemonConfig": {
     "ignore": [
