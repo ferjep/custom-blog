@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { Redirect } from 'react-router-dom'
 import { BlogConfigConext } from '../context/BlogConfigContext'
 import { MessageContext } from '../context/MessageContext'
 import Loading from './Loading'
@@ -6,6 +7,7 @@ import Loading from './Loading'
 export default function BlogConfigForm() {
   const BlogConfig = useContext(BlogConfigConext)
   const setMessage = useContext(MessageContext)
+  const [redirect, setRedirect] = useState(false)
   const [currentConfig, setCurrentConfig] = useState({})
   const [isLoading, setIsLoading] = useState(true)
 
@@ -17,19 +19,23 @@ export default function BlogConfigForm() {
     if (Object.keys(currentConfig).length > 0) setIsLoading(false)
   }, [currentConfig])
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     let { name, value } = e.target
 
     if (name === 'name' && value.length > 40) value = value.substring(0, 40)
-    setCurrentConfig(prev => ({ ...prev, [name]: value }))
+    setCurrentConfig((prev) => ({ ...prev, [name]: value }))
   }
 
   const saveConfig = () => {
     BlogConfig.update({ ...currentConfig })
-      .then(msg => setMessage({ type: 'success', text: msg }))
-      .catch(err => setMessage({ type: 'error', text: err }))
+      .then((msg) => {
+        setRedirect(true)
+        setMessage({ type: 'success', text: msg })
+      })
+      .catch((err) => setMessage({ type: 'error', text: err }))
   }
 
+  if (redirect) return <Redirect to="/admin/posts" />
   if (isLoading) return <Loading />
 
   return (

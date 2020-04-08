@@ -8,7 +8,7 @@ import { FaLock, FaLockOpen } from 'react-icons/fa'
 import editorTools from './editor.tools'
 import Loading from './Loading'
 
-const toSlug = string =>
+const toSlug = (string) =>
   string
     .toLowerCase()
     .replace(/\s+/g, '-') // Replace spaces with -
@@ -34,8 +34,8 @@ export default function PostEditor({ edit }) {
 
     if (edit) {
       fetch(`/api/posts/${params.slug}`)
-        .then(res => res.json())
-        .then(json => {
+        .then((res) => res.json())
+        .then((json) => {
           if (json.ok) {
             const post = json.post
             console.log('Post fetched', post)
@@ -46,21 +46,21 @@ export default function PostEditor({ edit }) {
               holder,
               slug: params.slug,
               data: { blocks: post.blocks },
-              tools: editorTools
+              tools: editorTools,
             })
           } else {
             setMessage({
               type: 'error',
-              text: json.msg
+              text: json.msg,
             })
           }
 
           setIsLoading(false)
         })
-        .catch(err => {
+        .catch((err) => {
           setMessage({
             type: 'error',
-            text: 'Could not request post'
+            text: 'Could not request post',
           })
           setIsLoading(false)
           console.log(err)
@@ -70,7 +70,7 @@ export default function PostEditor({ edit }) {
     } else {
       setEditorConfig({
         holder,
-        tools: editorTools
+        tools: editorTools,
       })
       setIsLoading(false)
       console.log('new mode')
@@ -92,7 +92,7 @@ export default function PostEditor({ edit }) {
     }
   }, [editorInstance])
 
-  const savePost = async e => {
+  const savePost = async (e) => {
     const editorData = await editorInstance.save()
 
     if (!title) {
@@ -116,7 +116,7 @@ export default function PostEditor({ edit }) {
       slug,
       tags,
       blocks: editorData.blocks,
-      editorjs_v: editorData.version
+      editorjs_v: editorData.version,
     }
 
     console.log('Post saved by btn', post)
@@ -137,23 +137,23 @@ export default function PostEditor({ edit }) {
       method: fetchingData.method,
       body: JSON.stringify(post),
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     })
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         console.log('Response Fetched after saving', json)
         if (json.ok) {
           setRedirect(true)
           setMessage({
             type: 'success',
-            text: json.msg
+            text: json.msg,
           })
         } else {
           setMessage({ type: 'error', text: json.msg })
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Something went wrong while saving', err)
         setMessage({ type: 'error', text: 'Could not get to the server' })
       })
@@ -161,10 +161,11 @@ export default function PostEditor({ edit }) {
 
   const deletePost = () => {
     fetch(`/api/posts/${editorConfig.slug}`, {
-      method: 'delete'
+      method: 'delete',
+      credentials: 'include',
     })
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         if (json.ok) {
           setRedirect(true)
           setMessage({ type: 'success', text: json.msg })
@@ -172,7 +173,7 @@ export default function PostEditor({ edit }) {
           setMessage({ type: 'error', text: json.msg })
         }
       })
-      .catch(err =>
+      .catch((err) =>
         setMessage({ type: 'error', text: 'Could not get to the server' })
       )
   }
@@ -221,7 +222,7 @@ export default function PostEditor({ edit }) {
               type="text"
               name="title"
               value={title}
-              onChange={e => {
+              onChange={(e) => {
                 if (slugInputDisabled) setSlug(toSlug(e.target.value))
                 setTitle(e.target.value)
               }}
@@ -230,7 +231,7 @@ export default function PostEditor({ edit }) {
           </label>
           <label className="input-wrapper">
             <span className="input-name">Tags</span>
-            <TagsInput value={tags} onChange={tags => setTags(tags)} />
+            <TagsInput value={tags} onChange={(tags) => setTags(tags)} />
           </label>
           <label className="input-wrapper">
             <span className="input-name">Url</span>
@@ -238,13 +239,13 @@ export default function PostEditor({ edit }) {
               type="text"
               name="slug"
               value={slug}
-              onChange={e => setSlug(toSlug(e.target.value))}
+              onChange={(e) => setSlug(toSlug(e.target.value))}
               placeholder="url"
               disabled={slugInputDisabled}
             />
             <button
               className="slug-input-btn"
-              onClick={e => setSlugInputDisabled(prev => !prev)}
+              onClick={(e) => setSlugInputDisabled((prev) => !prev)}
             >
               {slugInputDisabled ? <FaLock /> : <FaLockOpen />}
             </button>

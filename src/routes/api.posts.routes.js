@@ -4,15 +4,16 @@ const {
   updatePost,
   getPost,
   deletePost,
-  getPosts
+  getPosts,
 } = require('../controllers/posts.controller')
+const { verifyToken } = require('../controllers/admin.controller')
 
 // CRUD post
 
-router.post('/api/posts/new', createPost) //Create
+router.post('/api/posts/new', verifyToken, createPost) //Create
+router.put('/api/posts/:slug', verifyToken, updatePost) //Update
+router.delete('/api/posts/:slug', verifyToken, deletePost) //Delete
 router.get('/api/posts/:slug', getPost) // Read
-router.put('/api/posts/:slug', updatePost) //Update
-router.delete('/api/posts/:slug', deletePost) //Delete
 
 // Posts
 

@@ -7,33 +7,33 @@ export const BlogConfigProvider = ({ children }) => {
   const [config, setConfig] = useState({})
   const [isLoading, setIsLoading] = useState(true)
 
-  const update = data => {
+  const update = (data) => {
     return new Promise((resolve, reject) => {
       fetch('/api/blog/config', {
         method: 'put',
         body: JSON.stringify(data),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       })
-        .then(res => res.json())
-        .then(json => {
+        .then((res) => res.json())
+        .then((json) => {
           if (json.ok) {
             setConfig({ ...json.config })
             resolve('Config updated')
           } else {
-            reject('Could not update the config')
+            reject(json.msg)
           }
         })
-        .catch(err => reject('Something went wrong with the server'))
+        .catch((err) => reject('Could not get to the server'))
     })
   }
 
   useEffect(() => {
     fetch('/api/blog/config')
-      .then(res => res.json())
-      .then(json => setConfig(json.config))
-      .catch(err => {
+      .then((res) => res.json())
+      .then((json) => setConfig(json.config))
+      .catch((err) => {
         console.log(err)
       })
   }, [])

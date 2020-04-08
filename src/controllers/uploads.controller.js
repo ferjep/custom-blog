@@ -1,8 +1,8 @@
 const fileCtrl = {}
-const { GridFs } = require('../config/GridFs.config')
 const Upload = require('../models/Upload')
+const { GridFs } = require('../config/GridFs.config')
 let gfs
-GridFs.then(handle => (gfs = handle))
+GridFs.then((handle) => (gfs = handle))
 
 fileCtrl.handleUploadedFile = (req, res) => {
   if (req.file) {
@@ -12,29 +12,29 @@ fileCtrl.handleUploadedFile = (req, res) => {
       size: req.file.size,
       file_id: req.file.id,
       uploadDate: req.file.uploadDate,
-      used: false
+      used: false,
     })
 
     upload
       .save()
-      .then(uploadSaved => {
+      .then((uploadSaved) => {
         console.log('Upload', uploadSaved)
         return res.json({
           ok: true,
           msg: 'File uploaded successfully',
-          file: uploadSaved
+          file: uploadSaved,
         })
       })
-      .catch(err =>
+      .catch((err) =>
         res.status(500).json({
           ok: false,
-          msg: 'File saved but no record'
+          msg: 'File saved but no record',
         })
       )
   } else {
     return res.status(500).json({
       ok: false,
-      msg: 'No file uploaded'
+      msg: 'No file uploaded',
     })
   }
 }
@@ -42,13 +42,13 @@ fileCtrl.handleUploadedFile = (req, res) => {
 fileCtrl.getFile = async (req, res) => {
   gfs
     .find({
-      filename: req.params.filename
+      filename: req.params.filename,
     })
     .toArray((err, files) => {
       if (err || !files || files.length === 0) {
         return res.status(404).json({
           ok: false,
-          msg: 'no files exist'
+          msg: 'no files exist',
         })
       }
       gfs.openDownloadStreamByName(req.params.filename).pipe(res)
@@ -59,33 +59,29 @@ fileCtrl.deleteFile = (req, res) => {
   if (req.params.filename) {
     gfs.files.findOneAndDelete(
       {
-        filename: req.params.filename
+        filename: req.params.filename,
       },
       (err, file) => {
         if (err) {
           return res.status(404).json({
             ok: false,
-            msg: 'No file found'
+            msg: 'No file found',
           })
         }
 
         res.json({
           ok: true,
           msg: 'File deleted successfully',
-          file
+          file,
         })
       }
     )
   } else {
     res.status(400).json({
       ok: false,
-      msg: 'Please, provide a filename'
+      msg: 'Please, provide a filename',
     })
   }
-}
-
-fileCtrl.testFile = (req, res) => {
-  console.log(req.body)
 }
 
 module.exports = fileCtrl
