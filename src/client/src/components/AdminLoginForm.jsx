@@ -5,17 +5,17 @@ import { MessageContext } from '../context/MessageContext'
 import { Redirect } from 'react-router-dom'
 
 export default function AdminLoginForm() {
-  const { isAdmin, onLogin, onLogout } = useContext(AdminAuthConext)
+  const { isAdmin, doLogin } = useContext(AdminAuthConext)
   const setMessage = useContext(MessageContext)
   const [data, setData] = useState({ username: '', password: '' })
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { value, name } = e.target
-    setData((prev) => ({ ...prev, [name]: value }))
+    setData(prev => ({ ...prev, [name]: value }))
   }
 
   const handleLogin = () => {
-    onLogin(data).catch((err) => {
+    doLogin(data).catch(err => {
       setMessage({ type: 'error', text: err })
       setData({ username: '', password: '' })
     })
@@ -34,7 +34,7 @@ export default function AdminLoginForm() {
             className="card-label-input"
             placeholder="Username"
             value={data.username}
-            onKeyDown={(e) => (e.keyCode === 13 ? handleLogin() : null)}
+            onKeyDown={e => (e.keyCode === 13 ? handleLogin() : null)}
             onChange={handleChange}
           />
         </label>
@@ -45,7 +45,7 @@ export default function AdminLoginForm() {
             placeholder="Password"
             className="card-label-input"
             value={data.password}
-            onKeyDown={(e) => (e.keyCode === 13 ? handleLogin() : null)}
+            onKeyDown={e => (e.keyCode === 13 ? handleLogin() : null)}
             onChange={handleChange}
           />
         </label>
