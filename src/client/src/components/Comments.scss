@@ -1,0 +1,34 @@
+.Comments {
+  margin: 1rem 0;
+
+  &-no {
+    padding-bottom: 5rem;
+  }
+
+  .comment {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #f3f3f3;
+
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &-text {
+      margin: 1rem 0;
+    }
+
+    &-date {
+      display: flex;
+      align-items: center;
+      color: gray;
+
+      &-icon {
+        display: inline-block;
+        margin-right: 10px;
+      }
+    }
+  }
+}

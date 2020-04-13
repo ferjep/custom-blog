@@ -5,6 +5,8 @@ const {
   getPost,
   deletePost,
   getPosts,
+  addComment,
+  deleteComment,
 } = require('../controllers/posts.controller')
 const { verifyToken } = require('../controllers/admin.controller')
 
@@ -18,6 +20,11 @@ router.get('/api/posts/:slug', getPost) // Read
 // Posts
 
 router.get('/api/posts', getPosts)
+
+// Comments
+router.post('/api/posts/:slug/comments', addComment)
+router.delete('/api/posts/:slug/comments/:id', verifyToken, deleteComment)
+
 /*Queries: 
   start : the index where mongoose will start returning from || 0
   limit: how many documents will be returned from "start" || 10

@@ -1,4 +1,5 @@
 const postCtrl = {}
+const mongoose = require('mongoose')
 const Post = require('../models/Post')
 const Upload = require('../models/Upload')
 const { GridFs } = require('../config/GridFs.config')
@@ -22,18 +23,20 @@ postCtrl.createPost = (req, res) => {
         }
       })
 
-      console.log(`Post created`, post)
+      console.log(`Post created: "${post.title}" `)
+      // console.log(`Post created`, post)
+
       return res.json({
         ok: true,
         msg: 'Post created',
-        post
+        post,
       })
     })
     .catch(err => {
       console.log('Error saving post', err)
       res.status(500).json({
         ok: false,
-        msg: 'Error saving post'
+        msg: 'Error saving post',
       })
     })
 }
@@ -42,11 +45,11 @@ postCtrl.getPost = async (req, res) => {
   const post = await Post.findOne({ slug: req.params.slug }, { _id: 0 })
 
   if (post) {
-    console.log('Post found', post)
+    console.log(`Post found: "${post.title}" `)
     return res.json({
       ok: true,
       msg: 'Post found',
-      post
+      post,
     })
   } else {
     console.log('Post not found', post)
@@ -59,16 +62,17 @@ postCtrl.updatePost = async (req, res) => {
     { slug: req.params.slug },
     req.body,
     {
-      new: true
+      new: true,
     }
   )
 
   if (post) {
-    console.log('Post Updated!!!', post)
+    //console.log('Post Updated!!!', post)
+    console.log(`Post Updated: "${post.title}" `)
     return res.json({
       ok: true,
       msg: 'Post actualizado',
-      post
+      post,
     })
   } else {
     console.log('Post not found', post)
@@ -81,7 +85,8 @@ postCtrl.deletePost = async (req, res) => {
   const post = await Post.findOneAndRemove({ slug: req.params.slug })
 
   if (post) {
-    console.log('Post deleted', post)
+    console.log(`Post deleted: "${post.title}" `)
+    // console.log('Post deleted', post)
 
     const uploads = await Upload.find({ postSlug: post.slug })
 
@@ -104,13 +109,13 @@ postCtrl.deletePost = async (req, res) => {
     return res.json({
       ok: true,
       msg: 'Post deleted',
-      post
+      post,
     })
   } else {
     console.log('Post not found', post)
     return res.json({
       ok: false,
-      msg: 'Post not found'
+      msg: 'Post not found',
     })
   }
 }
@@ -131,10 +136,7 @@ postCtrl.getPosts = async (req, res) => {
 
   console.log('Queries:', { skip, limit, sort })
 
-  let posts = await Post.find({}, { _id: 0 })
-    .sort(sort)
-    .skip(skip)
-    .limit(limit)
+  let posts = await Post.find({}, { _id: 0 }).sort(sort).skip(skip).limit(limit)
 
   if (posts) {
     posts = posts.map(post => {
@@ -159,7 +161,7 @@ postCtrl.getPosts = async (req, res) => {
         ...post._doc,
         resume,
         mainImage,
-        blocks: undefined
+        blocks: undefined,
       }
     })
 
@@ -168,5 +170,74 @@ postCtrl.getPosts = async (req, res) => {
     res.json({ ok: false, msg: "Couldn't find any post" })
   }
 }
+
+// Comments
+
+postCtrl.addComment = async (req, res) => {
+  const { author, text } = req.body
+
+  if (!author || !text) {
+    return res
+      .status(400)
+      .json({ ok: false, msg: 'author or text field empty' })
+  }
+
+  try {
+    const { comments } = await Post.findOneAndUpdate(
+      { slug: req.params.slug },
+      {
+        $push: {
+          comments: {
+            $each: [{ author, text, createdAt: Date.now() }],
+            $position: 0,
+          },
+        },
+      },
+      { new: true }
+    )
+
+    if (comments) {
+      return res.json({
+        ok: true,
+        msg: 'Comment added',
+        comments,
+      })
+    }
+    return res.json({ ok: false, msg: 'Post not found' })
+  } catch (err) {
+    console.log('Comment error', err)
+    return res.status(500).json({ ok: false, msg: 'Something went wrong' })
+  }
+}
+postCtrl.deleteComment = async (req, res) => {
+  const { slug, id } = req.params
+
+  try {
+    const { comments } = await Post.findOneAndUpdate(
+      { slug },
+      { $pull: { comments: { _id: id } } },
+      { new: true }
+    )
+
+    if (Array.isArray(comments)) {
+      if (comments.some(comment => comment._id.toString() === id)) {
+        return res
+          .status(500)
+          .json({ ok: false, msg: 'Could not delete the comment' })
+      } else {
+        console.log('Comment deleted')
+        return res.json({ ok: true, msg: 'Comment deleted', comments })
+      }
+    }
+
+    return res.json({ ok: false, msg: 'Post not found' })
+  } catch (err) {
+    console.log('Error deleting comment', err)
+    return res
+      .status(500)
+      .json({ ok: false, msg: 'Something went wrong with the server' })
+  }
+}
+postCtrl.getComments = () => {}
 
 module.exports = postCtrl

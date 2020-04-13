@@ -7,8 +7,9 @@ import TagsInput from 'react-tagsinput'
 import { FaLock, FaLockOpen } from 'react-icons/fa'
 import editorTools from './editor.tools'
 import Loading from './Loading'
+import Comments from './Comments'
 
-const toSlug = (string) =>
+const toSlug = string =>
   string
     .toLowerCase()
     .replace(/\s+/g, '-') // Replace spaces with -
@@ -21,6 +22,7 @@ export default function PostEditor({ edit }) {
   const [tags, setTags] = useState([])
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
+  const [comments, setComments] = useState([])
   const [slugInputDisabled, setSlugInputDisabled] = useState(true)
   const [editorInstance, setEditorInstance] = useState({})
   const [editorConfig, setEditorConfig] = useState({})
@@ -34,14 +36,15 @@ export default function PostEditor({ edit }) {
 
     if (edit) {
       fetch(`/api/posts/${params.slug}`)
-        .then((res) => res.json())
-        .then((json) => {
+        .then(res => res.json())
+        .then(json => {
           if (json.ok) {
             const post = json.post
             console.log('Post fetched', post)
             setTitle(post.title)
             setTags(post.tags)
             setSlug(post.slug)
+            setComments(post.comments || [])
             setEditorConfig({
               holder,
               slug: params.slug,
@@ -57,7 +60,7 @@ export default function PostEditor({ edit }) {
 
           setIsLoading(false)
         })
-        .catch((err) => {
+        .catch(err => {
           setMessage({
             type: 'error',
             text: 'Could not request post',
@@ -92,7 +95,7 @@ export default function PostEditor({ edit }) {
     }
   }, [editorInstance])
 
-  const savePost = async (e) => {
+  const savePost = async e => {
     const editorData = await editorInstance.save()
 
     if (!title) {
@@ -140,8 +143,8 @@ export default function PostEditor({ edit }) {
         'Content-Type': 'application/json',
       },
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         console.log('Response Fetched after saving', json)
         if (json.ok) {
           setRedirect(true)
@@ -153,7 +156,7 @@ export default function PostEditor({ edit }) {
           setMessage({ type: 'error', text: json.msg })
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Something went wrong while saving', err)
         setMessage({ type: 'error', text: 'Could not get to the server' })
       })
@@ -162,10 +165,9 @@ export default function PostEditor({ edit }) {
   const deletePost = () => {
     fetch(`/api/posts/${editorConfig.slug}`, {
       method: 'delete',
-      credentials: 'include',
     })
-      .then((res) => res.json())
-      .then((json) => {
+      .then(res => res.json())
+      .then(json => {
         if (json.ok) {
           setRedirect(true)
           setMessage({ type: 'success', text: json.msg })
@@ -173,46 +175,60 @@ export default function PostEditor({ edit }) {
           setMessage({ type: 'error', text: json.msg })
         }
       })
-      .catch((err) =>
+      .catch(err =>
         setMessage({ type: 'error', text: 'Could not get to the server' })
       )
   }
 
+  const deleteComment = id => {
+    fetch(`/api/posts/${editorConfig.slug}/comments/${id}`, {
+      method: 'delete',
+    })
+      .then(res => res.json())
+      .then(json => {
+        console.log('Deleted comment response', json)
+        if (json.ok) {
+          setComments(json.comments)
+          setMessage({ type: 'success', text: json.msg })
+        } else {
+          setMessage({ type: 'error', text: json.msg })
+        }
+      })
+      .catch(err =>
+        setMessage({ type: 'error', text: 'Could not get to the server' })
+      )
+  }
+
+  if (redirect) return <Redirect to="/admin/posts" />
+
   if (isLoading) return <Loading />
 
   return (
-    <>
-      {redirect ? <Redirect to="/admin/posts" /> : ''}
+    <div className="PostEditor">
       <div className="page-center">
         <div className="page-header">
-          {(() => {
-            if (edit) {
-              return (
-                <>
-                  <h1>Edit Post</h1>
-                  <div className="btn-wrapper">
-                    <button className="btn bg-danger" onClick={deletePost}>
-                      Delete
-                    </button>
-                    <button className="btn" onClick={savePost}>
-                      Edit
-                    </button>
-                  </div>
-                </>
-              )
-            } else {
-              return (
-                <>
-                  <h1>Create Post</h1>
-                  <div className="btn-wrapper">
-                    <button className="btn" onClick={savePost}>
-                      Create
-                    </button>
-                  </div>
-                </>
-              )
-            }
-          })()}
+          {edit ? (
+            <>
+              <h1>Edit Post</h1>
+              <div className="btn-wrapper">
+                <button className="btn danger" onClick={deletePost}>
+                  Delete
+                </button>
+                <button className="btn success" onClick={savePost}>
+                  Edit
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h1>Create Post</h1>
+              <div className="btn-wrapper">
+                <button className="btn success" onClick={savePost}>
+                  Create
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="post-info">
@@ -222,7 +238,7 @@ export default function PostEditor({ edit }) {
               type="text"
               name="title"
               value={title}
-              onChange={(e) => {
+              onChange={e => {
                 if (slugInputDisabled) setSlug(toSlug(e.target.value))
                 setTitle(e.target.value)
               }}
@@ -231,7 +247,7 @@ export default function PostEditor({ edit }) {
           </label>
           <label className="input-wrapper">
             <span className="input-name">Tags</span>
-            <TagsInput value={tags} onChange={(tags) => setTags(tags)} />
+            <TagsInput value={tags} onChange={tags => setTags(tags)} />
           </label>
           <label className="input-wrapper">
             <span className="input-name">Url</span>
@@ -239,20 +255,27 @@ export default function PostEditor({ edit }) {
               type="text"
               name="slug"
               value={slug}
-              onChange={(e) => setSlug(toSlug(e.target.value))}
+              onChange={e => setSlug(toSlug(e.target.value))}
               placeholder="url"
               disabled={slugInputDisabled}
             />
             <button
               className="slug-input-btn"
-              onClick={(e) => setSlugInputDisabled((prev) => !prev)}
+              onClick={e => setSlugInputDisabled(prev => !prev)}
             >
               {slugInputDisabled ? <FaLock /> : <FaLockOpen />}
             </button>
           </label>
         </div>
         <div id="editor-js" className="border-gray"></div>
+
+        {edit && (
+          <div className="PostEditor-comments">
+            <h1 className="PostEditor-comments-title">Comments</h1>
+            <Comments admin comments={comments} onDelete={deleteComment} />
+          </div>
+        )}
       </div>
-    </>
+    </div>
   )
 }

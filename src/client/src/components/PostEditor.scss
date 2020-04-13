@@ -1,6 +1,18 @@
+.PostEditor {
+  &-comments {
+    margin: 1rem 0;
+  }
+
+  margin-bottom: 5rem;
+}
+
 .btn-wrapper {
   display: flex;
   margin-left: auto;
+
+  & > * + * {
+    margin-left: 10px;
+  }
 }
 
 .react-tagsinput {

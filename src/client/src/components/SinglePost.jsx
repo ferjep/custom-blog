@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import './SinglePost.scss'
 import { useParams } from 'react-router-dom'
 import Loading from './Loading'
+import CommentForm from './CommentForm'
+import Comments from './Comments'
 
 export default function SinglePost() {
   const { slug } = useParams()
@@ -13,8 +15,8 @@ export default function SinglePost() {
       .then(res => res.json())
       .then(json => {
         if (json.ok) {
+          console.log('Post', json.post)
           setPost(json.post)
-          console.log(json.post)
         } else {
           console.log('Post not found')
         }
@@ -22,10 +24,38 @@ export default function SinglePost() {
   }, [])
 
   useEffect(() => {
-    if (Object.keys(post).length > 0) {
+    if (Object.keys(post).length > 0 && isLoading) {
       setIsLoading(false)
     }
   }, [post])
+
+  const sendComment = comment => {
+    return new Promise((resolve, reject) => {
+      if (!comment.author) return reject('Please add your name')
+      if (!comment.text) return reject('Please add a valid comment')
+
+      fetch(`/api/posts/${post.slug}/comments`, {
+        method: 'post',
+        body: JSON.stringify(comment),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.ok) {
+            setPost(prev => ({ ...prev, comments: json.comments }))
+            resolve(json.msg)
+          } else {
+            reject(json.msg)
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          reject('Could not get to the server')
+        })
+    })
+  }
 
   if (isLoading) return <Loading />
 
@@ -54,6 +84,12 @@ export default function SinglePost() {
             )
         })}
       </div>
+      <section className="SinglePost-comments-section">
+        <h2 className="SinglePost-comments-title">Comments</h2>
+
+        <CommentForm onSubmit={sendComment} />
+        <Comments comments={post.comments} />
+      </section>
     </div>
   )
 }
