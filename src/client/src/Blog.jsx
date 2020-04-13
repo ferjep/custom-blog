@@ -17,6 +17,9 @@ export default function Blog(props) {
       <Navbar logo="Blog" logoTo="/">
         <NavLink to="/">Home</NavLink>
         <NavLink to="/about">About</NavLink>
+        <NavLink to="/admin" last>
+          Admin
+        </NavLink>
       </Navbar>
       <BlogHeader
         blogName={data.name}
