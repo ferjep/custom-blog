@@ -8,7 +8,7 @@ import PostCard from './PostCard'
 const queryDefaults = {
   skip: 0,
   limit: 10,
-  sort: 'date'
+  sort: 'date',
 }
 
 export default function PostsList({ admin }) {
@@ -59,8 +59,8 @@ export default function PostsList({ admin }) {
       <div className="page-header">
         {admin ? (
           <>
-            <h1>Create new post</h1>{' '}
-            <Link className="btn" to="/admin/posts/new">
+            <h1>Create new post</h1>
+            <Link className="btn success" to="/admin/posts/new">
               Create
             </Link>
           </>
