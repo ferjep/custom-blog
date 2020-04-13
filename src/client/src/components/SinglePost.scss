@@ -1,7 +1,12 @@
+.SinglePost-page {
+  margin-bottom: 5rem;
+}
+
 .SinglePost-body {
   display: flex;
   flex-direction: column;
-  margin-bottom: 5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid lightgray;
 
   &-p {
     margin-bottom: 1rem;
