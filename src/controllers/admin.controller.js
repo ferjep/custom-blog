@@ -17,10 +17,10 @@ adminCtrl.login = (req, res) => {
     { expiresIn: '1h' },
     (err, token) => {
       if (err) {
-        console.log(err)
+        console.log('Error logging admin', err)
         return res.status(500).json({ ok: false, msg: 'Something went wrong' })
       }
-      console.log('token', token)
+      console.log('Admin just logged in')
       return res
         .cookie('accessToken', token, { httpOnly: true })
         .json({ ok: true, msg: 'Admin logged in' })
@@ -29,23 +29,34 @@ adminCtrl.login = (req, res) => {
 }
 
 adminCtrl.logout = (req, res) => {
-  res.send()
+  res
+    .cookie('accessToken', null, { httpOnly: true })
+    .json({ ok: true, msg: 'Admin Logged out' })
 }
 
 adminCtrl.verifyToken = (req, res, next) => {
   const { accessToken } = req.cookies
 
-  if (!accessToken)
+  if (!accessToken) {
+    console.log('Invalid token')
     return res.status(401).json({ ok: false, msg: 'Not authorized' })
+  }
 
   jwt.verify(accessToken, process.env.SECRET_ACCESS_KEY, {}, (err, token) => {
-    if (err)
+    if (err) {
+      console.log('Invalid token')
       return res
-        .status(401)
+        .status(403)
         .json({ ok: false, msg: 'Invalid token, not authorized' })
+    }
     console.log('Admin user')
     return next()
   })
+}
+
+adminCtrl.loggedIn = (req, res) => {
+  console.log('Admin already logged in')
+  res.json({ ok: true, msg: 'Valid token' })
 }
 
 module.exports = adminCtrl

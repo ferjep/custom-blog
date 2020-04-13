@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { MessageProvider } from './context/MessageContext'
-import { AdminAuthProvider, AdminAuthConext } from './context/AdminAuthContext'
+import { MessageContext } from './context/MessageContext'
+import { AdminAuthConext } from './context/AdminAuthContext'
 import { Navbar, NavLink } from './components/Navbar'
 import Posts from './components/Posts'
 import PostEditor from './components/PostEditor'
@@ -17,43 +17,50 @@ const PrivateRoute = ({ children, ...props }) => {
 }
 
 export default function Admin() {
+  const { doLogout } = useContext(AdminAuthConext)
+  const setMessage = useContext(MessageContext)
+
+  const handleLogout = e => {
+    e.preventDefault()
+    doLogout().catch(msg => setMessage({ type: 'error', text: msg }))
+  }
+
   return (
-    <div>
-      <MessageProvider>
-        <AdminAuthProvider>
-          <Switch>
-            <Route exact path="/admin">
-              <AdminLoginForm />
-            </Route>
-            <PrivateRoute exact path="/admin/*">
-              <Navbar logo="Blog admin" logoTo="/admin/posts" admin>
-                <NavLink to="/admin/posts">Posts</NavLink>
-                <NavLink to="/admin/config">Config</NavLink>
-                <NavLink to="/" last>
-                  Logout
-                </NavLink>
-              </Navbar>
-              <Route exact path="/admin/posts">
-                <div className="page-center">
-                  <Posts admin />
-                </div>
-              </Route>
-              <Route path="/admin/posts/new">
-                <PostEditor />
-              </Route>
-              <Route path="/admin/posts/edit/:slug">
-                <PostEditor edit />
-              </Route>
-              <Route path="/admin/config">
-                <ConfigForm />
-              </Route>
-              <Route>
-                <Redirect to="/admin/posts" />
-              </Route>
-            </PrivateRoute>
-          </Switch>
-        </AdminAuthProvider>
-      </MessageProvider>
-    </div>
+    <Switch>
+      <Route exact path="/admin">
+        <AdminLoginForm />
+      </Route>
+      <PrivateRoute exact path="/admin/*">
+        <Navbar logo="Blog admin" logoTo="/admin/posts" admin>
+          <NavLink to="/admin/posts">Posts</NavLink>
+          <NavLink to="/admin/config">Config</NavLink>
+          <NavLink to="/" last>
+            Blog
+          </NavLink>
+          <NavLink to="/" onClick={handleLogout}>
+            Logout
+          </NavLink>
+        </Navbar>
+        <Switch>
+          <Route exact path="/admin/posts">
+            <div className="page-center">
+              <Posts admin />
+            </div>
+          </Route>
+          <Route path="/admin/posts/new">
+            <PostEditor />
+          </Route>
+          <Route exact path="/admin/posts/edit/:slug">
+            <PostEditor edit />
+          </Route>
+          <Route path="/admin/config">
+            <ConfigForm />
+          </Route>
+          <Route>
+            <Redirect to="/admin/posts" />
+          </Route>
+        </Switch>
+      </PrivateRoute>
+    </Switch>
   )
 }
